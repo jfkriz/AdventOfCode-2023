@@ -93,7 +93,9 @@ class Trebuchet(data: List<String>) {
         }
 
         if (lastNumberWord != null) {
-            newText = newText.reversed().replace(lastNumberWord.first.reversed(), numberMap[lastNumberWord.first].toString()).reversed()
+            newText =
+                newText.reversed().replace(lastNumberWord.first.reversed(), numberMap[lastNumberWord.first].toString())
+                    .reversed()
         }
 
         return newText
