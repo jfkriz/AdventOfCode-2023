@@ -71,8 +71,6 @@ class Trebuchet(data: List<String>) {
             .map { line -> line.filter(Char::isDigit) }
             .map { digits -> digits.first().toString() + digits.last() }
 
-        println(lines.joinToString("\n"))
-
         return lines
             .sumOf { number -> number.toInt() }
     }
