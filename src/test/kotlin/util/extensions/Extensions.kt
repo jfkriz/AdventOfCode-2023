@@ -5,7 +5,7 @@ fun IntRange.encloses(other: IntRange) =
 
 fun IntRange.overlaps(other: IntRange) =
     (this.contains(other.first) || this.contains(other.last)) ||
-        (other.contains(this.first) || other.contains(this.last))
+            (other.contains(this.first) || other.contains(this.last))
 
 /**
  * Chunks the List<String> into a List<List<String>>, where chunks are broken up by the delimiter indicated (default is blank).
@@ -66,3 +66,11 @@ fun List<IntRange>.reduce(): List<IntRange> =
             reduced
         }
     }
+
+/**
+ * Replace the last occurrence of [oldValue] with [newValue] in the string. This was originally added for
+ * [Day 1 of the 2023 Advent of Code](https://adventofcode.com/2023/day/1), so we could easily find the last
+ * occurrence of a number word (like "one") in a string, and replace it with the numeric value ("1").
+ */
+fun String.replaceLast(oldValue: String, newValue: String): String =
+    this.reversed().replaceFirst(oldValue.reversed(), newValue.reversed()).reversed()
