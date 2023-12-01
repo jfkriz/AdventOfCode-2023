@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package util.extensions
 
 fun IntRange.encloses(other: IntRange) =

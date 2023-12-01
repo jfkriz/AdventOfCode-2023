@@ -1,6 +1,8 @@
+@file:Suppress("unused")
+
 package util.collections
 
-import java.util.Stack
+import java.util.*
 
 /**
  * Pop N items from the stack. Note that the items returned will be in the same order that they were in the stack. This is meant

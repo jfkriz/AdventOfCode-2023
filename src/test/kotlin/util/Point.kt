@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package util
 
 import kotlin.math.abs
@@ -20,7 +22,7 @@ data class Point<T>(var x: Int, var y: Int, var value: T) {
     fun isSameLocation(other: Point<*>) = this.x == other.x && this.y == other.y
 
     fun isNeighboringLocation(other: Point<*>, includeDiagonal: Boolean = true) =
-        Direction.values().filter {
+        Direction.entries.filter {
             if (includeDiagonal) {
                 true
             } else {
@@ -44,7 +46,7 @@ data class Point<T>(var x: Int, var y: Int, var value: T) {
     }
 
     val neighbors: Map<Direction, Point<T>>
-        get() = Direction.values().associateWith { Point(x + it.xOffset, y + it.yOffset, value) }
+        get() = Direction.entries.associateWith { Point(x + it.xOffset, y + it.yOffset, value) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
