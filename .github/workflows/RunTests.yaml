@@ -1,6 +1,7 @@
 name: Advent of Code 2023 - Run Tests
 on:
   - push
+  - workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
