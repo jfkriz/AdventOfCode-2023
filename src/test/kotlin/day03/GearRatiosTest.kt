@@ -60,41 +60,23 @@ class Solver(data: List<String>) {
 }
 
 class EngineSchematic(data: List<String>) {
+    private val partNumberRegex = Regex("\\d+") // Any sequence of consecutive numbers on a line will match
+    private val symbolRegex = Regex("[^0-9.]") // Any individual character except 0-9 or . on a line will match
+
     val parts = data.mapIndexed { y, line ->
-        var partNum = ""
-        var startX = 0
-        val partsToAdd = mutableListOf<Part>()
-        line.forEachIndexed { x, ch ->
-            if (ch.isDigit()) {
-                if (partNum.isBlank()) {
-                    startX = x
-                }
-                partNum += ch
-            } else {
-                if (partNum.isNotBlank()) {
-                    partsToAdd.add(Part(partNum, startX, y))
-                    partNum = ""
-                }
-            }
-        }
-        if (partNum.isNotBlank()) {
-            partsToAdd.add(Part(partNum, startX, y))
-        }
-        partsToAdd
+        partNumberRegex.findAll(line).map {
+            Part(it.value, it.range.first, y)
+        }.toList()
     }.flatten()
 
     val symbols = data.mapIndexed { y, line ->
-        line.mapIndexedNotNull { x, ch ->
-            if (ch.isDigit() || ch == '.') {
-                null
-            } else {
-                Symbol(ch, x, y)
-            }
-        }
+        symbolRegex.findAll(line).map {
+            Symbol(it.value.first(), it.range.first, y)
+        }.toList()
     }.flatten()
 
     val gearRatios: List<Int>
-        get() = symbols.filter { it.isPossibleGearSymbol }
+        get() = symbols.filter { it.isPossiblyAGear }
             .map { it.getAdjacentParts(parts) }
             .filter { it.size == 2 }
             .map { gearParts ->
@@ -109,7 +91,7 @@ data class Part(val number: String, val startX: Int, val startY: Int) {
 }
 
 class Symbol(value: Char, x: Int, y: Int) : DataPoint<Char>(x, y, value) {
-    val isPossibleGearSymbol: Boolean
+    val isPossiblyAGear: Boolean
         get() = value == '*'
 
     fun getAdjacentParts(allParts: List<Part>): List<Part> =
