@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
+import util.DataPoint
 import util.Point
 
 @DisplayName("Day 03 - Gear Ratios")
@@ -102,17 +103,17 @@ class EngineSchematic(data: List<String>) {
 }
 
 data class Part(val number: String, val startX: Int, val startY: Int) {
-    private val points = number.mapIndexed { index, ch -> Point(startX + index, startY, ch) }
+    private val points = number.mapIndexed { index, _ -> Point(startX + index, startY) }
     fun isAdjacentTo(symbol: Symbol): Boolean =
-        points.any { it.isNeighboringLocation(symbol.point) }
+        points.any { it.isNeighboringLocation(symbol) }
 }
 
-data class Symbol(val value: Char, val x: Int, val y: Int) {
-    val point = Point(x, y, value)
-
+class Symbol(value: Char, x: Int, y: Int) : DataPoint<Char>(x, y, value) {
     val isPossibleGearSymbol: Boolean
         get() = value == '*'
 
     fun getAdjacentParts(allParts: List<Part>): List<Part> =
-        allParts.filter { part -> part.isAdjacentTo(this) }
+        allParts
+            .filter { part -> part.startY in y - 1..y + 1 } // Just a small optimization, so we only consider parts in our row, or immediately above or below
+            .filter { part -> part.isAdjacentTo(this) }
 }

@@ -6,22 +6,22 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-data class Point<T>(var x: Int, var y: Int, var value: T) {
-    fun move(direction: Direction): Point<T> =
+open class Point(var x: Int, var y: Int) {
+    fun move(direction: Direction): Point =
         this.apply {
             x += direction.xOffset
             y += direction.yOffset
         }
 
-    fun move(xCount: Int, yCount: Int): Point<T> =
+    fun move(xCount: Int, yCount: Int): Point =
         this.apply {
             x += xCount
             y += yCount
         }
 
-    fun isSameLocation(other: Point<*>) = this.x == other.x && this.y == other.y
+    fun isSameLocation(other: DataPoint<*>) = this.x == other.x && this.y == other.y
 
-    fun isNeighboringLocation(other: Point<*>, includeDiagonal: Boolean = true) =
+    fun isNeighboringLocation(other: DataPoint<*>, includeDiagonal: Boolean = true) =
         Direction.entries.filter {
             if (includeDiagonal) {
                 true
@@ -34,25 +34,25 @@ data class Point<T>(var x: Int, var y: Int, var value: T) {
             it.first == other.x && it.second == other.y
         }
 
-    fun differenceWith(other: Point<*>) = (this.x - other.x) to (this.y - other.y)
+    fun differenceWith(other: DataPoint<*>) = (this.x - other.x) to (this.y - other.y)
 
-    fun distanceFrom(other: Point<*>) = abs(this.x - other.x) + abs(this.y - other.y)
+    fun distanceFrom(other: DataPoint<*>) = abs(this.x - other.x) + abs(this.y - other.y)
 
-    fun lineTo(other: Point<*>, fill: T): List<Point<T>> {
+    fun lineTo(other: Point): List<Point> {
         val xDelta = (other.x - x).sign
         val yDelta = (other.y - y).sign
         val steps = maxOf((x - other.x).absoluteValue, (y - other.y).absoluteValue)
-        return (1..steps).scan(this) { last, _ -> Point(last.x + xDelta, last.y + yDelta, fill) }
+        return (1..steps).scan(this) { last, _ -> Point(last.x + xDelta, last.y + yDelta) }
     }
 
-    val neighbors: Map<Direction, Point<T>>
-        get() = Direction.entries.associateWith { Point(x + it.xOffset, y + it.yOffset, value) }
+    val neighbors: Map<Direction, Point>
+        get() = Direction.entries.associateWith { Point(x + it.xOffset, y + it.yOffset) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Point<*>
+        other as DataPoint<*>
 
         if (x != other.x) return false
         if (y != other.y) return false
@@ -65,6 +65,31 @@ data class Point<T>(var x: Int, var y: Int, var value: T) {
         result = 31 * result + y
         return result
     }
+
+}
+
+open class DataPoint<T>(x: Int, y: Int, var value: T) : Point(x, y) {
+    fun lineTo(other: DataPoint<*>, fill: T) = lineTo(other).map { DataPoint(it.x, it.y, fill) }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DataPoint<*>
+
+        if (x != other.x) return false
+        if (y != other.y) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = x
+        result = 31 * result + y
+        return result
+    }
+
+    fun copy(): DataPoint<T> = DataPoint(x, y, value)
 }
 
 enum class Direction(val xOffset: Int, val yOffset: Int, val diagonal: Boolean = false) {
