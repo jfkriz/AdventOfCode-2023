@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
 
-@DisplayName("Day 2 - Cube Conundrum")
+@DisplayName("Day 02 - Cube Conundrum")
 @TestMethodOrder(OrderAnnotation::class)
 class CubeConundrumTest : DataFiles() {
     private val sampleCubeGames by lazy {

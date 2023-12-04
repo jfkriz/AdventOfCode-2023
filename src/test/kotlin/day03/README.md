@@ -1,4 +1,4 @@
-# Day 3: Gear Ratios
+# [Day 3: Gear Ratios](https://adventofcode.com/2023/day/3)
 
 ## Part One
 
