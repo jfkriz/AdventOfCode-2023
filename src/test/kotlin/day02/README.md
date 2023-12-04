@@ -81,4 +81,4 @@ Both parts of this puzzle are complete! They provide two gold stars: \*\*
 
 At this point, you should [return to your Advent calendar](https://adventofcode.com/2023/) and try another puzzle.
 
-If you still want to see it, you can [get your puzzle input](https://adventofcode.com/2023/2/input).
+If you still want to see it, you can [get your puzzle input](https://adventofcode.com/2023/day/2/input).
