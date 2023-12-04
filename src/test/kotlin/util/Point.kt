@@ -66,6 +66,7 @@ open class Point(var x: Int, var y: Int) {
         return result
     }
 
+    open fun copy(): Point = Point(x, y)
 }
 
 open class DataPoint<T>(x: Int, y: Int, var value: T) : Point(x, y) {
@@ -89,7 +90,7 @@ open class DataPoint<T>(x: Int, y: Int, var value: T) : Point(x, y) {
         return result
     }
 
-    fun copy(): DataPoint<T> = DataPoint(x, y, value)
+    override fun copy(): DataPoint<T> = DataPoint(x, y, value)
 }
 
 enum class Direction(val xOffset: Int, val yOffset: Int, val diagonal: Boolean = false) {

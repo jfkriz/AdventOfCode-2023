@@ -56,9 +56,7 @@ class Solver(data: List<String>) {
         newCards.forEachIndexed { i, card ->
             if (card.isWinningCard) {
                 val endIndex = (i + 1 + card.matchingNumbers).coerceAtMost(newCards.size)
-                for (j in (i + 1 until endIndex)) {
-                    newCards[j].instances += newCards[i].instances
-                }
+                newCards.subList(i + 1, endIndex).forEach { it.instances += card.instances }
             }
         }
         return newCards.sumOf { it.instances }
