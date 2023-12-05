@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
+import util.collections.FastLongRange
 import util.extensions.chunked
 
 @DisplayName("Day 05 - If You Give A Seed A Fertilizer")
@@ -39,13 +40,16 @@ class SeedFertilizerTest : DataFiles() {
 
     @Test
     @Order(4)
-    fun `Part 2 Real Input should return 90210`() {
-        assertEquals(90210, solver.solvePartTwo())
+    fun `Part 2 Real Input should return 46294175`() {
+        assertEquals(46294175, solver.solvePartTwo())
     }
 }
 
 class Solver(data: List<String>) {
+    // In part 1, the seeds are just individual seed numbers
     private val seeds = data[0].split(":")[1].trim().split(" ").map(String::toLong)
+
+    // In part 2, the seeds are actually pairs of ranges of seeds
     private val seedsPartTwo =
         data[0].split(":")[1].trim().split(" ").chunked(2).map { it[0].toLong()..it[0].toLong() + it[1].toLong() }
     private val maps = data.drop(2).chunked().map { SourceDestinationMap(it) }.associateBy { it.source }
@@ -68,9 +72,9 @@ class Solver(data: List<String>) {
         return minLocation!!
     }
 
-    fun getSeedLocation(seed: Long): Long = getNextDestination(seed, maps["seed"])
+    private fun getSeedLocation(seed: Long): Long = getNextDestination(seed, maps["seed"])
 
-    fun getNextDestination(currentNumber: Long, map: SourceDestinationMap?): Long {
+    private fun getNextDestination(currentNumber: Long, map: SourceDestinationMap?): Long {
         if (map == null) {
             return currentNumber
         }
@@ -87,20 +91,20 @@ data class SourceDestinationMap(
     constructor(lines: List<String>) : this(
         source = lines[0].split("-")[0],
         destination = lines[0].split("-")[2].split(" ")[0],
-        ranges = lines.drop(1).map { RangePair(it) }
+        ranges = lines.drop(1).map { RangePair(it) }.sortedBy { it.source.start }
     )
 
-    fun getDestination(n: Long): Long =
+    fun getDestination(n: Long) =
         ranges.firstOrNull { it.isInSourceRange(n) }?.getDestination(n) ?: n
 }
 
-data class RangePair(val source: LongRange, val destination: LongRange) {
+data class RangePair(val source: FastLongRange, val destination: FastLongRange) {
     constructor(line: String) : this(
         source = line.split(" ").let {
-            LongRange(it[1].toLong(), it[1].toLong() + it[2].toLong())
+            FastLongRange(it[1].toLong(), it[2].toLong())
         },
         destination = line.split(" ").let {
-            LongRange(it[0].toLong(), it[0].toLong() + it[2].toLong())
+            FastLongRange(it[0].toLong(), it[2].toLong())
         },
     )
 
@@ -112,5 +116,4 @@ data class RangePair(val source: LongRange, val destination: LongRange) {
         } else {
             null
         }
-
 }
