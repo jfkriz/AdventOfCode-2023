@@ -105,7 +105,7 @@ data class RangePair(val source: FastLongRange, val destination: FastLongRange) 
         },
         destination = line.split(" ").let {
             FastLongRange(it[0].toLong(), it[2].toLong())
-        },
+        }
     )
 
     fun isInSourceRange(n: Long): Boolean = source.contains(n)

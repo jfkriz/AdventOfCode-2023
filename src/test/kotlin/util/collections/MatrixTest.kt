@@ -59,7 +59,7 @@ class MatrixTest {
 
         assertEquals(listOf(20, 21, 22, 23), Matrix(data).row(1))
     }
-    
+
     @Test
     fun `Should get proper column`() {
         val data = listOf(

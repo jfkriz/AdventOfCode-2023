@@ -70,7 +70,7 @@ class Trebuchet(data: List<String>) {
         "6" to "6",
         "7" to "7",
         "8" to "8",
-        "9" to "9",
+        "9" to "9"
     )
 
     fun findCalibrationValue(): Int {
