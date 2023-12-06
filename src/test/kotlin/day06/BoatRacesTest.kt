@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.sqrt
 
 @DisplayName("Day 06 - Wait For It")
 @TestMethodOrder(OrderAnnotation::class)
@@ -65,8 +68,27 @@ class Solver(data: List<String>) {
 }
 
 data class BoatRace(val chargeTimeAllowed: Long, val recordDistanceMm: Long) {
-    val chargeTimesWithWinningResultCount: Int
+    val chargeTimesWithWinningResultCount: Int = chargeTimesWithWinningResultCountQuadratic
+
+    // This works but part 2 takes about 500ms, others take 30-40ms
+    private val chargeTimesWithWinningResultCountBruteForce: Int
         get() = (0..chargeTimeAllowed).filter { chargeTime ->
             (chargeTime * (chargeTimeAllowed - chargeTime)) > recordDistanceMm
         }.size
+
+    // This works and each part takes ~1ms
+    private val chargeTimesWithWinningResultCountQuadratic: Int
+        get() {
+            val discriminator = (chargeTimeAllowed * chargeTimeAllowed - 4 * recordDistanceMm).toDouble()
+
+            if (discriminator < 0) {
+                return 0
+            }
+
+            val lowerBound = floor(((chargeTimeAllowed - sqrt(discriminator)) / 2) + 1)
+
+            val upperBound = ceil(((chargeTimeAllowed + sqrt(discriminator)) / 2) - 1)
+
+            return (upperBound - lowerBound + 1).toInt()
+        }
 }
