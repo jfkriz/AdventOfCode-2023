@@ -65,8 +65,8 @@ class Solver(data: List<String>) {
 }
 
 data class BoatRace(val chargeTimeAllowed: Long, val recordDistanceMm: Long) {
-    val chargeTimesWithWinningResultCount: Int =
-        (0..chargeTimeAllowed).filter { chargeTime ->
+    val chargeTimesWithWinningResultCount: Int
+        get() = (0..chargeTimeAllowed).filter { chargeTime ->
             (chargeTime * (chargeTimeAllowed - chargeTime)) > recordDistanceMm
         }.size
 }
