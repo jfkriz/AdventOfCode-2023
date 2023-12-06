@@ -1,8 +1,10 @@
 name: Update AoC Badges
 on:
-  schedule:                                      # run workflow based on schedule
+  schedule: # run workflow based on schedule
     - cron: '6 5 1-25 12 *'                      # from the 1. December till 25. December every day at 5:06am (avoid load at full hours)
-
+  pull_request:
+    types:
+      - closed
   workflow_dispatch:                             # allow to manually start the workflow
 
   # push:                                          # (disabled) run on push, be carefull with this setting
@@ -11,6 +13,7 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) }}
     steps:
       - uses: actions/checkout@v4                # clones your repo
 
