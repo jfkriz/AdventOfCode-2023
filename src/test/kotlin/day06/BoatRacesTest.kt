@@ -67,6 +67,7 @@ class Solver(data: List<String>) {
     }
 }
 
+@Suppress("unused")
 data class BoatRace(val chargeTimeAllowed: Long, val recordDistanceMm: Long) {
     val chargeTimesWithWinningResultCount: Int = chargeTimesWithWinningResultCountQuadratic
 
