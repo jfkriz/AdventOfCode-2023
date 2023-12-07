@@ -1,37 +1,28 @@
 name: Update AoC Badges
 on:
-  schedule: # run workflow based on schedule
+  schedule:
     - cron: '6 5 1-25 12 *'                      # from the 1. December till 25. December every day at 5:06am (avoid load at full hours)
   pull_request:
     types:
       - closed
-  workflow_dispatch:                             # allow to manually start the workflow
-
-  # push:                                          # (disabled) run on push, be carefull with this setting
-  # as the workflow should only be triggered at a rate lower than
-  # 4 times a hour to keep traffic on aoc site low
+  workflow_dispatch:
 jobs:
   update:
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) }}
     steps:
-      - uses: actions/checkout@v4                # clones your repo
+      - uses: actions/checkout@v4
 
       - uses: joblo2213/aoc-badges-action@v3
         with:
-          userid: 1721685                          # your user id, see setup on how to obtain
-          session: ${{ secrets.AOC_SESSION }}    # secret containing session code, see setup on how to obtain
+          userid: 1721685                       # your user id, see setup on how to obtain
+          session: ${{ secrets.AOC_SESSION }}   # secret containing session code, see setup on how to obtain
 
-      #         Optional inputs:
-      #
-      #         year: 2021                                                                                     # The year for which stats should be retrieved
-      #         leaderboard: 'https://adventofcode.com/2020/leaderboard/private/view/00000.json'               # The url of the leaderboard from witch the data is fetched. Typically your private leaderboard.
-      #         file: 'README.md'                                                                              # The file that contains the badges
-      #         dayRegex: '(?<=https:\/\/img\.shields\.io\/badge\/day%20📅-)[0-9]+(?=-blue)'                   # Regular expression that finds the content of the day badge in your file.
-      #         starsRegex: '(?<=https:\/\/img\.shields\.io\/badge\/stars%20⭐-)[0-9]+(?=-yellow)'             # Regular expression that finds the content of the stars badge in your file.
-      #         daysCompletedRegex: '(?<=https:\/\/img\.shields\.io\/badge\/days%20completed-)[0-9]+(?=-red)'  # Regular expression that finds the content of the days completed badge iun your file.
-
-      - uses: stefanzweifel/git-auto-commit-action@v5     # Step that pushes these local changes back to your github repo
+      - uses: devops-infra/action-commit-push@v0.9.2
         with:
-          commit_message: Update AoC badges
-          file_pattern: README.md
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_prefix: "[Automated commit]"
+          commit_message: "Updating Advent of Code stats"
+          force: false
+          target_branch: remote-sync
