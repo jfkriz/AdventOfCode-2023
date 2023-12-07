@@ -1,4 +1,5 @@
-name: Advent of Code 2023 - Run Tests
+name: Advent of Code - Run Tests
+run-name: Advent of Code $(date +'%Y') - Run Tests
 on:
   - push
   - workflow_dispatch
@@ -25,5 +26,3 @@ jobs:
           name: JUnit Tests
           reporter: java-junit
           path: build/test-results/test/TEST-*.xml
-
-
