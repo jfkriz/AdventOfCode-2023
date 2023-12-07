@@ -1,5 +1,5 @@
 name: Advent of Code - Run Tests
-run-name: Advent of Code $(date +'%Y') - Run Tests
+run-name: Advent of Code ${{ $(date +'%Y') }} - Run Tests
 on:
   - push
   - workflow_dispatch
