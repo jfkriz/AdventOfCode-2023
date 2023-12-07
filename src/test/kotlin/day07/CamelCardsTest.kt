@@ -95,7 +95,6 @@ data class Hand(val cards: List<CamelCard>, val bid: Int, val wild: Boolean = fa
                     } else {
                         HandRank.FullHouse
                     }
-
                 }
 
                 HandRank.OnePair -> HandRank.ThreeOfAKind
