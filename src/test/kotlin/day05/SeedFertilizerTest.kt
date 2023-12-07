@@ -12,7 +12,7 @@ import util.extensions.chunked
 
 @DisplayName("Day 05 - If You Give A Seed A Fertilizer")
 @TestMethodOrder(OrderAnnotation::class)
-class SeedFertilizerTest : DataFiles() {
+class SeedFertilizerTest : DataFiles {
     private val sampleSolver by lazy {
         Solver(loadSampleInput())
     }

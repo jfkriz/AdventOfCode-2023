@@ -2,7 +2,7 @@ package util
 
 import java.util.stream.Collectors
 
-open class DataFiles {
+interface DataFiles {
     fun loadInput(): List<String> = loadFile("input.txt")
 
     fun loadSampleInput(): List<String> = loadFile("test-input.txt")

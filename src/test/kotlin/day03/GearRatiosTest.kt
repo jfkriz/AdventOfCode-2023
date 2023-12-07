@@ -12,7 +12,7 @@ import util.Point
 
 @DisplayName("Day 03 - Gear Ratios")
 @TestMethodOrder(OrderAnnotation::class)
-class GearRatiosTest : DataFiles() {
+class GearRatiosTest : DataFiles {
     private val sampleSolver by lazy {
         Solver(loadSampleInput())
     }

@@ -10,7 +10,7 @@ import util.DataFiles
 
 @DisplayName("Day 07 - Camel Cards")
 @TestMethodOrder(OrderAnnotation::class)
-class CamelCardsTest : DataFiles() {
+class CamelCardsTest : DataFiles {
     private val sampleSolver by lazy {
         Solver(loadSampleInput())
     }

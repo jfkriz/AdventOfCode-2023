@@ -11,7 +11,7 @@ import kotlin.math.pow
 
 @DisplayName("Day 04 - Scratchcards")
 @TestMethodOrder(OrderAnnotation::class)
-class ScratchcardsTest : DataFiles() {
+class ScratchcardsTest : DataFiles {
     private val sampleSolver by lazy {
         Solver(loadSampleInput())
     }
