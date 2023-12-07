@@ -51,7 +51,7 @@ class Solver(data: List<String>) {
     }
 
     fun solvePartTwo(): Int {
-        return hands.map(Hand::getWild).sorted().mapIndexed { index, hand -> hand.bid * (index + 1) }.sum()
+        return hands.map(Hand::makeItWild).sorted().mapIndexed { index, hand -> hand.bid * (index + 1) }.sum()
     }
 }
 
@@ -61,78 +61,10 @@ data class Hand(val cards: List<CamelCard>, val bid: Int, val wild: Boolean = fa
         line.split("\\s+".toRegex())[1].toInt()
     )
 
-    fun getWild() = Hand(cards, bid, true)
+    fun makeItWild() = Hand(cards, bid, true)
 
-    val rank: HandRank
-        get() = if (wild) {
-            rankWild
-        } else {
-            rankNoWild
-        }
-
-    private val rankWild: HandRank
-        get() {
-            val initialRank = rankNoWild
-
-            // If there are no jokers, or it was already five of a kind, just return the rank
-            if (!cards.contains(CamelCard.JACK) || initialRank == HandRank.FiveOfAKind) {
-                return initialRank
-            }
-
-            // Most of the initial ranks will just bump up to the next highest one,
-            // but a few exceptions handled below
-            return when (initialRank) {
-                // 4444J -> 44444, 22JJJ -> 22222, 333JJ -> 33333
-                HandRank.FourOfAKind, HandRank.FullHouse -> HandRank.FiveOfAKind
-                HandRank.ThreeOfAKind -> HandRank.FourOfAKind
-                // 1122J -> 11222, 22JJ3 -> 22223
-                HandRank.TwoPair -> {
-                    val groups = cards.groupingBy { it }.eachCount()
-
-                    // If the jack was one of the pairs, it becomes 4 of a kind, otherwise it'll be a full house
-                    if (groups[CamelCard.JACK] == 2) {
-                        HandRank.FourOfAKind
-                    } else {
-                        HandRank.FullHouse
-                    }
-                }
-
-                HandRank.OnePair -> HandRank.ThreeOfAKind
-                HandRank.HighCard -> HandRank.OnePair
-                else -> HandRank.HighCard
-            }
-        }
-
-    private val rankNoWild: HandRank
-        get() {
-            val groups = cards.groupingBy { it }.eachCount()
-
-            return when (groups.size) {
-                1 -> HandRank.FiveOfAKind
-                2 -> {
-                    // If the groups are [4, 1], that means it is 4 of a kind
-                    // The other possibility is [3, 2], which is a full house
-                    if (groups.values.contains(4)) {
-                        HandRank.FourOfAKind
-                    } else {
-                        HandRank.FullHouse
-                    }
-                }
-
-                3 -> {
-                    // One group of 3, and two groups of 1 [3, 1, 1] means 3 of a kind
-                    // The other possibility is [2, 2, 1], which is two pair
-                    if (groups.values.containsAll(listOf(3, 1, 1))) {
-                        HandRank.ThreeOfAKind
-                    } else {
-                        HandRank.TwoPair
-                    }
-                }
-
-                4 -> HandRank.OnePair
-                else -> HandRank.HighCard
-            }
-        }
+    private val rank: HandRank
+        get() = HandRank.fromCards(cards, wild)
 
     override fun compareTo(other: Hand): Int {
         if (this.rank == other.rank) {
@@ -192,5 +124,45 @@ enum class HandRank {
     ThreeOfAKind,
     FullHouse,
     FourOfAKind,
-    FiveOfAKind
+    FiveOfAKind;
+
+    companion object {
+        fun fromCards(cards: List<CamelCard>, wild: Boolean): HandRank =
+            cards.groupingBy { it }.eachCount().values.sortedDescending().joinToString("").let { groups ->
+                when (groups) {
+                    "5" -> FiveOfAKind
+                    "41" -> FourOfAKind
+                    "32" -> FullHouse
+                    "311" -> ThreeOfAKind
+                    "221" -> TwoPair
+                    "2111" -> OnePair
+                    else -> HighCard
+                }
+            }.let { initialRank ->
+                if (!wild || !cards.contains(CamelCard.JACK) || initialRank == FiveOfAKind) {
+                    initialRank
+                } else {
+                    // Most of the initial ranks will just bump up to the next highest one,
+                    // but a few exceptions handled below
+                    return when (initialRank) {
+                        // 4444J -> 44444, 22JJJ -> 22222, 333JJ -> 33333
+                        FourOfAKind, FullHouse -> FiveOfAKind
+                        ThreeOfAKind -> FourOfAKind
+                        // 1122J -> 11222, 22JJ3 -> 22223
+                        TwoPair -> {
+                            // If the jack was one of the pairs, it becomes 4 of a kind, otherwise it'll be a full house
+                            if (cards.count { it == CamelCard.JACK } == 2) {
+                                FourOfAKind
+                            } else {
+                                FullHouse
+                            }
+                        }
+
+                        OnePair -> ThreeOfAKind
+                        HighCard -> OnePair
+                        else -> HighCard
+                    }
+                }
+            }
+    }
 }
