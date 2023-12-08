@@ -2,6 +2,7 @@ package util
 
 import java.math.BigInteger
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class Math {
     companion object {
         fun greatestCommonDenominator(a: BigInteger, b: BigInteger): BigInteger {
