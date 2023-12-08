@@ -25,4 +25,4 @@ jobs:
           commit_prefix: "[Automated commit]"
           commit_message: "Updating Advent of Code stats"
           force: false
-          target_branch: remote-sync
+          target_branch: main
