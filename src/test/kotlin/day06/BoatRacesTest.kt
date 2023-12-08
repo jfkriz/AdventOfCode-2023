@@ -13,7 +13,7 @@ import kotlin.math.sqrt
 
 @DisplayName("Day 06 - Wait For It")
 @TestMethodOrder(OrderAnnotation::class)
-class BoatRacesTest : DataFiles() {
+class BoatRacesTest : DataFiles {
     private val sampleSolver by lazy {
         Solver(loadSampleInput())
     }

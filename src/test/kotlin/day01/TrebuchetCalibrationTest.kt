@@ -11,7 +11,7 @@ import util.extensions.replaceLast
 
 @DisplayName("Day 01 - Trebuchet?!")
 @TestMethodOrder(OrderAnnotation::class)
-class TrebuchetCalibrationTest : DataFiles() {
+class TrebuchetCalibrationTest : DataFiles {
     @Test
     @Order(1)
     fun `Part 1 Sample Input should return 142`() {

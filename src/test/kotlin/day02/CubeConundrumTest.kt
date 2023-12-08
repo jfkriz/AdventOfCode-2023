@@ -10,7 +10,7 @@ import util.DataFiles
 
 @DisplayName("Day 02 - Cube Conundrum")
 @TestMethodOrder(OrderAnnotation::class)
-class CubeConundrumTest : DataFiles() {
+class CubeConundrumTest : DataFiles {
     private val sampleCubeGames by lazy {
         CubeGames(loadSampleInput())
     }
