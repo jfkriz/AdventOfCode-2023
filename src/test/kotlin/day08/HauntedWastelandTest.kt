@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
 import util.Math
-import java.math.BigInteger
 
 @DisplayName("Day 08 - Haunted Wasteland")
 @TestMethodOrder(OrderAnnotation::class)
@@ -41,7 +40,7 @@ class HauntedWastelandTest : DataFiles {
     @Test
     @Order(4)
     fun `Part 2 Sample Input should return 6`() {
-        assertEquals("6".toBigInteger(), sampleSolverPartTwo.solvePartTwo())
+        assertEquals(6L, sampleSolverPartTwo.solvePartTwo())
     }
 
     @Test
@@ -53,7 +52,7 @@ class HauntedWastelandTest : DataFiles {
     @Test
     @Order(5)
     fun `Part 2 Real Input should return 10818234074807`() {
-        assertEquals("10818234074807".toBigInteger(), solver.solvePartTwo())
+        assertEquals(10818234074807L, solver.solvePartTwo())
     }
 }
 
@@ -65,14 +64,14 @@ class Solver(data: List<String>) {
         return calculateSteps(nodes["AAA"]!!, "ZZZ")
     }
 
-    fun solvePartTwo(): BigInteger {
+    fun solvePartTwo(): Long {
         val startingNodes = nodes.filter { it.key.endsWith('A') }.toMap()
 
         val allSteps = startingNodes.values.associateWith { start ->
             calculateSteps(start, "Z")
         }
 
-        return Math.leastCommonMultiple(allSteps.values.map { it.toBigInteger() })
+        return Math.leastCommonMultiple(allSteps.values.map { it.toLong() })
     }
 
     private fun calculateSteps(start: Node, endMatch: String): Int {

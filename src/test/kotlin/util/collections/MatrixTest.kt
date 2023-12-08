@@ -1,9 +1,9 @@
 package util.collections
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import util.Direction
-import kotlin.test.assertTrue
 
 class MatrixTest {
     @Test
