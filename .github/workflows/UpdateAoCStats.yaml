@@ -12,16 +12,15 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - uses: joblo2213/aoc-badges-action@v3
         with:
           userid: 1721685                       # your user id, see setup on how to obtain
           session: ${{ secrets.AOC_SESSION }}   # secret containing session code, see setup on how to obtain
 
-      - uses: devops-infra/action-commit-push@v0.9.2
+      - uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
-          add_timestamp: true
-          commit_prefix: "[Automated commit]"
-          commit_message: "Updating Advent of Code stats"
-          force: false
+          file_pattern: README.md
+          commit_message: Updating Advent of Code stats
