@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
 
-@DisplayName("Day 09 - MirageMaintenance")
+@DisplayName("Day 09 - Mirage Maintenance")
 @TestMethodOrder(OrderAnnotation::class)
 class MirageMaintenanceTest : DataFiles {
     private val sampleSolver by lazy {
@@ -57,33 +57,21 @@ class Solver(data: List<String>) {
 class NumberSequence(val numbers: List<Int>) {
     constructor(line: String) : this(line.split("\\s+".toRegex()).map(String::toInt))
 
-    fun predict(): NumberSequence {
-        val predictionSequences = mutableListOf(numbers.toMutableList())
-        while (!predictionSequences.last().all { it == 0 }) {
-            predictionSequences.add(
-                predictionSequences.last().windowed(2, 1, false).map { it[1] - it[0] }.toMutableList()
-            )
-        }
-        predictionSequences.last().add(0)
-        predictionSequences.reversed().windowed(2, 1, false).forEach {
-            it[1].add(it[0].last() + it[1].last())
-        }
+    fun predict(): NumberSequence = NumberSequence(predict(numbers))
 
-        return NumberSequence(predictionSequences.first())
-    }
+    fun predictBackwards() = NumberSequence(predict(numbers.reversed()).reversed())
 
-    fun predictBackwards(): NumberSequence {
-        val predictionSequences = mutableListOf(numbers.reversed().toMutableList())
-        while (!predictionSequences.last().all { it == 0 }) {
-            predictionSequences.add(
-                predictionSequences.last().windowed(2, 1, false).map { it[0] - it[1] }.toMutableList()
-            )
+    private fun predict(sequence: List<Int>): List<Int> =
+        mutableListOf(sequence.toMutableList()).let { predictionSequences ->
+            while (!predictionSequences.last().all { it == 0 }) {
+                predictionSequences.add(
+                    predictionSequences.last().windowed(2, 1, false).map { it[1] - it[0] }.toMutableList()
+                )
+            }
+            predictionSequences.last().add(0)
+            predictionSequences.reversed().windowed(2, 1, false).forEach {
+                it[1].add(it[0].last() + it[1].last())
+            }
+            predictionSequences.first()
         }
-        predictionSequences.last().add(0)
-        predictionSequences.reversed().windowed(2, 1, false).forEach {
-            it[1].add(it[1].last() - it[0].last())
-        }
-
-        return NumberSequence(predictionSequences.first().reversed())
-    }
 }
