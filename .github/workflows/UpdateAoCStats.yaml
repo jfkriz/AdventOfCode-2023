@@ -12,6 +12,8 @@ jobs:
     if: ${{ github.event_name != 'pull_request' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
 
       - uses: joblo2213/aoc-badges-action@v3
         with:
