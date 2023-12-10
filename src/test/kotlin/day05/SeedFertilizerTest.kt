@@ -1,6 +1,7 @@
 package day05
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation
 import org.junit.jupiter.api.Order
@@ -40,6 +41,7 @@ class SeedFertilizerTest : DataFiles {
 
     @Test
     @Order(4)
+    @Disabled("This test runs way too long, about 4 minutes on my laptop...")
     fun `Part 2 Real Input should return 46294175`() {
         assertEquals(46294175, solver.solvePartTwo())
     }

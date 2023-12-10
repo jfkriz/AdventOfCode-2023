@@ -103,6 +103,14 @@ open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
     ) =
         findAllPaths(end, allowDiagonal, pointFilter).filter { it.key == start }.ifEmpty { emptyMap() }.values.first()
 
+    fun findLongestPath(
+        start: DataPoint<T>,
+        end: DataPoint<T>,
+        allowDiagonal: Boolean = false,
+        pointFilter: (currentPoint: DataPoint<T>, neighboringPoint: DataPoint<T>) -> Boolean = { _, _ -> true }
+    ) =
+        findAllPaths(end, allowDiagonal, pointFilter).filter { it.key == start }.ifEmpty { emptyMap() }.values.last()
+
     /**
      * Turn this matrix on it's side, and return the new representation. By transposing, the first row becomes the first column,
      * the second row becomes the second column, and so on.
@@ -184,6 +192,24 @@ open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
         }
 
     fun pointAt(row: Int, col: Int): DataPoint<T> = DataPoint(col, row, grid[row][col])
+
+    fun find(pointFilter: (currentPoint: T) -> Boolean): List<DataPoint<T>> {
+        return grid.mapIndexed { y, row ->
+            row.mapIndexedNotNull { x, t ->
+                if (pointFilter(t)) {
+                    DataPoint(x, y, t)
+                } else {
+                    null
+                }
+            }
+        }.flatten()
+    }
+
+    fun points(): Set<DataPoint<T>> {
+        return grid.mapIndexed { y, row ->
+            row.mapIndexed { x, t -> DataPoint(x, y, t) }
+        }.flatten().toSet()
+    }
 
     fun setPoint(row: Int, col: Int, value: T) = if (isValidPoint(row, col)) {
         grid[row][col] = value

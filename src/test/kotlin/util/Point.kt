@@ -19,9 +19,9 @@ open class Point(var x: Int, var y: Int) {
             y += yCount
         }
 
-    fun isSameLocation(other: DataPoint<*>) = this.x == other.x && this.y == other.y
+    fun isSameLocation(other: Point) = this.x == other.x && this.y == other.y
 
-    fun isNeighboringLocation(other: DataPoint<*>, includeDiagonal: Boolean = true) =
+    fun isNeighboringLocation(other: Point, includeDiagonal: Boolean = true) =
         Direction.entries.filter {
             if (includeDiagonal) {
                 true
@@ -34,9 +34,9 @@ open class Point(var x: Int, var y: Int) {
             it.first == other.x && it.second == other.y
         }
 
-    fun differenceWith(other: DataPoint<*>) = (this.x - other.x) to (this.y - other.y)
+    fun differenceWith(other: Point) = (this.x - other.x) to (this.y - other.y)
 
-    fun distanceFrom(other: DataPoint<*>) = abs(this.x - other.x) + abs(this.y - other.y)
+    fun distanceFrom(other: Point) = abs(this.x - other.x) + abs(this.y - other.y)
 
     fun lineTo(other: Point): List<Point> {
         val xDelta = (other.x - x).sign
