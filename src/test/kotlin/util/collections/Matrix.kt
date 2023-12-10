@@ -44,7 +44,7 @@ open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
     ): Map<Direction, DataPoint<T>> =
         Direction.entries.filter { includeDiagonal || !it.diagonal }.filter {
             (row + it.yOffset < height) && (row + it.yOffset >= 0) &&
-                    (col + it.xOffset < width) && (col + it.xOffset >= 0)
+                (col + it.xOffset < width) && (col + it.xOffset >= 0)
         }.associateWith {
             pointAt(row + it.yOffset, col + it.xOffset)
         }.filter {
@@ -110,7 +110,6 @@ open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
         pointFilter: (currentPoint: DataPoint<T>, neighboringPoint: DataPoint<T>) -> Boolean = { _, _ -> true }
     ) =
         findAllPaths(end, allowDiagonal, pointFilter).filter { it.key == start }.ifEmpty { emptyMap() }.values.last()
-
 
     /**
      * Turn this matrix on it's side, and return the new representation. By transposing, the first row becomes the first column,
