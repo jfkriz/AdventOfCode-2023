@@ -92,18 +92,18 @@ class Solver(data: List<String>) {
                     listOf(maze.mainLoop[0].copy().move(Direction.Down))
                 )
             ) ||
-                    fl.containsAll(
-                        listOf(
-                            maze.mainLoop[0].copy().move(Direction.Up),
-                            listOf(maze.mainLoop[0].copy().move(Direction.Right))
-                        )
-                    ) ||
-                    fl.containsAll(
-                        listOf(
-                            maze.mainLoop[0].copy().move(Direction.Up),
-                            listOf(maze.mainLoop[0].copy().move(Direction.Left))
-                        )
+                fl.containsAll(
+                    listOf(
+                        maze.mainLoop[0].copy().move(Direction.Up),
+                        listOf(maze.mainLoop[0].copy().move(Direction.Right))
                     )
+                ) ||
+                fl.containsAll(
+                    listOf(
+                        maze.mainLoop[0].copy().move(Direction.Up),
+                        listOf(maze.mainLoop[0].copy().move(Direction.Left))
+                    )
+                )
         val loopPointsToConsider = if (startIsLowerCornerOrVertical) {
             listOf(Tile.VERTICAL, Tile.BOTTOM_LEFT, Tile.BOTTOM_RIGHT, Tile.START)
         } else {
@@ -158,9 +158,9 @@ data class Maze(val tiles: Set<DataPoint<Tile>>, val mainLoop: List<DataPoint<Ti
 
                     if (nextHeadings.contains(Direction.Down) && !path.contains(
                             next.moveTo(
-                                Direction.Down,
-                                mazePoints
-                            )
+                                    Direction.Down,
+                                    mazePoints
+                                )
                         )
                     ) {
                         currentHeading = Direction.Down
@@ -170,9 +170,9 @@ data class Maze(val tiles: Set<DataPoint<Tile>>, val mainLoop: List<DataPoint<Ti
 
                     if (nextHeadings.contains(Direction.Left) && !path.contains(
                             next.moveTo(
-                                Direction.Left,
-                                mazePoints
-                            )
+                                    Direction.Left,
+                                    mazePoints
+                                )
                         )
                     ) {
                         currentHeading = Direction.Left
@@ -182,9 +182,9 @@ data class Maze(val tiles: Set<DataPoint<Tile>>, val mainLoop: List<DataPoint<Ti
 
                     if (nextHeadings.contains(Direction.Right) && !path.contains(
                             next.moveTo(
-                                Direction.Right,
-                                mazePoints
-                            )
+                                    Direction.Right,
+                                    mazePoints
+                                )
                         )
                     ) {
                         currentHeading = Direction.Right
@@ -202,13 +202,16 @@ data class Maze(val tiles: Set<DataPoint<Tile>>, val mainLoop: List<DataPoint<Ti
                 }
             }
 
-            return Maze(mazePoints.map {
-                if (path.contains(it)) {
-                    it
-                } else {
-                    it.copy().apply { value = Tile.GROUND }
-                }
-            }.toSet(), path.toList())
+            return Maze(
+                mazePoints.map {
+                    if (path.contains(it)) {
+                        it
+                    } else {
+                        it.copy().apply { value = Tile.GROUND }
+                    }
+                }.toSet(),
+                path.toList()
+            )
         }
     }
 }
@@ -228,7 +231,6 @@ enum class Tile(val symbol: Char, val directions: Set<Direction>) {
             entries.firstOrNull { it.symbol == symbol } ?: throw IllegalArgumentException("Invalid symbol '$symbol'")
     }
 }
-
 
 fun DataPoint<Tile>.moveTo(heading: Direction, tiles: Set<DataPoint<Tile>>): DataPoint<Tile>? =
     tiles.find { this.copy().move(heading).isSameLocation(it) }
