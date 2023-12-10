@@ -76,3 +76,48 @@ fun List<IntRange>.reduce(): List<IntRange> =
  */
 fun String.replaceLast(oldValue: String, newValue: String): String =
     this.reversed().replaceFirst(oldValue.reversed(), newValue.reversed()).reversed()
+
+/**
+ * Compute the lowest common multiple for a list of numbers. This is the smallest number that is evenly
+ * divisible by every number in the list.
+ */
+fun List<Long>.lcm(): Long = assertValue(
+    this,
+    this.size >= 2
+) { "You must provide at least two numbers to compute lcm" }.reduce { acc, l -> acc.lcm(l) }
+
+/**
+ * Compute the lowest common multiple for this number and another. This is the smallest number that is evenly
+ * divisible by both numbers.
+ */
+fun Long.lcm(other: Long): Long = (this * other) / this.gcd(other)
+
+/**
+ * Compute the greatest common denominator for this number and another number. This is the largest number that
+ * divides evenly with zero remainder into both numbers.
+ */
+fun Long.gcd(other: Long): Long =
+    if (other == 0L) {
+        this
+    } else {
+        other.gcd(this % other)
+    }
+
+/**
+ * Compute the greatest common denominator for a list of numbers. This is the largest number that
+ * divides evenly with zero remainder into all numbers in the list.
+ */
+fun List<Long>.gcd(): Long = assertValue(
+    this,
+    this.size >= 2
+) { "You must provide at least two numbers to compute gcd" }.reduce { acc, l -> acc.gcd(l) }
+
+/**
+ * A convenience method to assert that a given [value] passes the specified boolean [test]. This will
+ * return the [value] if it passes the test, or will throw an exception with the given [lazyMessage]
+ * if it fails.
+ */
+fun <T> assertValue(value: T, test: Boolean, lazyMessage: () -> Any): T {
+    assert(test) { lazyMessage }
+    return value
+}

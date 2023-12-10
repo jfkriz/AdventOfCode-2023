@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
-import util.Math
+import util.extensions.lcm
 
 @DisplayName("Day 08 - Haunted Wasteland")
 @TestMethodOrder(OrderAnnotation::class)
@@ -71,7 +71,7 @@ class Solver(data: List<String>) {
             calculateSteps(start, "Z")
         }
 
-        return Math.leastCommonMultiple(allSteps.values.map { it.toLong() })
+        return allSteps.values.map { it.toLong() }.lcm()
     }
 
     private fun calculateSteps(start: Node, endMatch: String): Int {
