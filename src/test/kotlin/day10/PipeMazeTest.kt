@@ -76,33 +76,32 @@ class PipeMazeTest : DataFiles {
 }
 
 class Solver(data: List<String>) {
-    val maze = Maze(data).removeJunk()
-    val mainLoop = maze.mainLoopTiles
+    private val maze = Maze.fromInputLines(data)
 
     fun solvePartOne(): Int {
-        return mainLoop.size / 2
+        return maze.mainLoop.size / 2
     }
 
     fun solvePartTwo(): Int {
-        val fl = listOf(mainLoop[1], mainLoop.last())
+        val fl = listOf(maze.mainLoop.first(), maze.mainLoop.last())
 
         val startIsLowerCornerOrVertical =
             fl.containsAll(
                 listOf(
-                    mainLoop[0].copy().move(Direction.Up),
-                    listOf(mainLoop[0].copy().move(Direction.Down))
+                    maze.mainLoop[0].copy().move(Direction.Up),
+                    listOf(maze.mainLoop[0].copy().move(Direction.Down))
                 )
             ) ||
                     fl.containsAll(
                         listOf(
-                            mainLoop[0].copy().move(Direction.Up),
-                            listOf(mainLoop[0].copy().move(Direction.Right))
+                            maze.mainLoop[0].copy().move(Direction.Up),
+                            listOf(maze.mainLoop[0].copy().move(Direction.Right))
                         )
                     ) ||
                     fl.containsAll(
                         listOf(
-                            mainLoop[0].copy().move(Direction.Up),
-                            listOf(mainLoop[0].copy().move(Direction.Left))
+                            maze.mainLoop[0].copy().move(Direction.Up),
+                            listOf(maze.mainLoop[0].copy().move(Direction.Left))
                         )
                     )
         val loopPointsToConsider = if (startIsLowerCornerOrVertical) {
@@ -115,7 +114,7 @@ class Solver(data: List<String>) {
         var total = 0
         ground.forEach { g ->
             val loopPointsToLeft =
-                mainLoop.filter { it.y == g.y && it.x < g.x && loopPointsToConsider.contains(it.value) }
+                maze.mainLoop.filter { it.y == g.y && it.x < g.x && loopPointsToConsider.contains(it.value) }
             if (loopPointsToLeft.size % 2 != 0) {
                 total++
             }
@@ -124,87 +123,78 @@ class Solver(data: List<String>) {
     }
 }
 
-data class Maze(val tiles: Set<DataPoint<Tile>>) {
-    val start: DataPoint<Tile> = tiles.find { it.value == Tile.START }!!
+data class Maze(val tiles: Set<DataPoint<Tile>>, val mainLoop: List<DataPoint<Tile>>) {
+    companion object {
+        fun fromInputLines(lines: List<String>): Maze {
+            val mazePoints = lines.mapIndexed { y, row ->
+                row.mapIndexed { x, col ->
+                    DataPoint(x, y, Tile.fromSymbol(col))
+                }
+            }.flatten().toSet()
 
-    fun removeJunk(): Maze {
-        val loop = mainLoopTiles.toSet()
-        val newTiles = tiles.map {
-            if (loop.contains(it)) {
-                it
-            } else {
-                it.copy().apply { value = Tile.GROUND }
-            }
-        }
-
-        return Maze(newTiles.toSet())
-    }
-
-    override fun toString(): String {
-        val sb = StringBuilder()
-        for (y in 0 until tiles.maxOf { it.y }) {
-            for (x in 0 until tiles.maxOf { it.x }) {
-                sb.append(" ${tiles.find { it.y == y && it.x == x }} ")
-            }
-            sb.append("\n")
-        }
-        return sb.toString()
-    }
-
-    constructor(lines: List<String>) : this(
-        lines.mapIndexed { y, row ->
-            row.mapIndexed { x, col ->
-                DataPoint(x, y, Tile.fromSymbol(col))
-            }
-        }.flatten().toSet()
-    )
-
-    val mainLoopTiles: List<DataPoint<Tile>>
-        get() {
-            val path = mutableListOf<DataPoint<Tile>>()
+            val start = mazePoints.find { it.value == Tile.START }!!
+            val path = LinkedHashSet<DataPoint<Tile>>()
             var complete = false
 
-            for (initialHeading in start.getConnectionHeadings()) {
+            for (initialHeading in start.getConnectionHeadings(mazePoints)) {
                 path.clear()
                 var currentHeading = initialHeading
                 var current = start
                 while (true) {
                     path.add(current.copy())
-                    val next = current.moveTo(currentHeading) ?: break
+                    val next = current.moveTo(currentHeading, mazePoints) ?: break
 
                     if (next == start) {
                         complete = true
-                        break;
+                        break
                     }
 
-                    val nextHeadings = next.getConnectionHeadings()
-                    if (nextHeadings.contains(Direction.Up) && !path.contains(next.moveTo(Direction.Up))) {
+                    val nextHeadings = next.getConnectionHeadings(mazePoints)
+                    if (nextHeadings.contains(Direction.Up) && !path.contains(next.moveTo(Direction.Up, mazePoints))) {
                         currentHeading = Direction.Up
-                        current = next;
-                        continue;
+                        current = next
+                        continue
                     }
 
-                    if (nextHeadings.contains(Direction.Down) && !path.contains(next.moveTo(Direction.Down))) {
+                    if (nextHeadings.contains(Direction.Down) && !path.contains(
+                            next.moveTo(
+                                Direction.Down,
+                                mazePoints
+                            )
+                        )
+                    ) {
                         currentHeading = Direction.Down
-                        current = next;
-                        continue;
+                        current = next
+                        continue
                     }
 
-                    if (nextHeadings.contains(Direction.Left) && !path.contains(next.moveTo(Direction.Left))) {
+                    if (nextHeadings.contains(Direction.Left) && !path.contains(
+                            next.moveTo(
+                                Direction.Left,
+                                mazePoints
+                            )
+                        )
+                    ) {
                         currentHeading = Direction.Left
-                        current = next;
-                        continue;
+                        current = next
+                        continue
                     }
 
-                    if (nextHeadings.contains(Direction.Right) && !path.contains(next.moveTo(Direction.Right))) {
+                    if (nextHeadings.contains(Direction.Right) && !path.contains(
+                            next.moveTo(
+                                Direction.Right,
+                                mazePoints
+                            )
+                        )
+                    ) {
                         currentHeading = Direction.Right
-                        current = next;
-                        continue;
+                        current = next
+                        continue
                     }
 
                     // No valid unvisited direction from this spot
                     path.add(next)
-                    break;
+                    break
                 }
 
                 if (complete) {
@@ -212,39 +202,15 @@ data class Maze(val tiles: Set<DataPoint<Tile>>) {
                 }
             }
 
-            return path
-        }
-
-    fun DataPoint<Tile>.moveTo(heading: Direction): DataPoint<Tile>? =
-        tiles.find { this.copy().move(heading).isSameLocation(it) }
-
-    fun DataPoint<Tile>.getConnections() =
-        this.value.directions.mapNotNull {
-            tiles.find { tile ->
-                tile == tile.copy().move(it)
-            }
-        }.filter { this.canConnectTo(it) }
-
-    fun DataPoint<Tile>.getConnectionHeadings() =
-        this.value.directions.filter {
-            tiles.any { tile ->
-                tile.isSameLocation(this.copy().move(it))
-            }
-        }
-
-    fun DataPoint<Tile>.canConnectTo(other: DataPoint<Tile>): Boolean {
-        return when (this.value) {
-            Tile.VERTICAL -> other.value != Tile.HORIZONTAL
-            Tile.HORIZONTAL -> other.value != Tile.VERTICAL
-            Tile.TOP_LEFT -> other.value != Tile.TOP_LEFT
-            Tile.TOP_RIGHT -> other.value != Tile.TOP_RIGHT
-            Tile.BOTTOM_LEFT -> other.value != Tile.BOTTOM_LEFT
-            Tile.BOTTOM_RIGHT -> other.value != Tile.BOTTOM_RIGHT
-            Tile.GROUND, Tile.INSIDE -> false
-            else -> true
+            return Maze(mazePoints.map {
+                if (path.contains(it)) {
+                    it
+                } else {
+                    it.copy().apply { value = Tile.GROUND }
+                }
+            }.toSet(), path.toList())
         }
     }
-
 }
 
 enum class Tile(val symbol: Char, val directions: Set<Direction>) {
@@ -255,8 +221,7 @@ enum class Tile(val symbol: Char, val directions: Set<Direction>) {
     TOP_RIGHT('7', setOf(Direction.Down, Direction.Left)),
     TOP_LEFT('F', setOf(Direction.Down, Direction.Right)),
     GROUND('.', emptySet()),
-    START('S', setOf(Direction.Up, Direction.Down, Direction.Left, Direction.Right)),
-    INSIDE('#', emptySet());
+    START('S', setOf(Direction.Up, Direction.Down, Direction.Left, Direction.Right));
 
     companion object {
         fun fromSymbol(symbol: Char): Tile =
@@ -264,3 +229,13 @@ enum class Tile(val symbol: Char, val directions: Set<Direction>) {
     }
 }
 
+
+fun DataPoint<Tile>.moveTo(heading: Direction, tiles: Set<DataPoint<Tile>>): DataPoint<Tile>? =
+    tiles.find { this.copy().move(heading).isSameLocation(it) }
+
+fun DataPoint<Tile>.getConnectionHeadings(tiles: Set<DataPoint<Tile>>) =
+    this.value.directions.filter {
+        tiles.any { tile ->
+            tile.isSameLocation(this.copy().move(it))
+        }
+    }
