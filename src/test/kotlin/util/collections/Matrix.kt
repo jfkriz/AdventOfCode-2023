@@ -7,6 +7,7 @@ import util.Direction
 import util.extensions.toward
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
     private var grid: MutableList<MutableList<T>> =
         validate(initialContents).map { it.map { r -> r }.toMutableList() }.toMutableList()
