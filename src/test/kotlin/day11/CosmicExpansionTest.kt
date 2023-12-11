@@ -7,8 +7,7 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import util.DataFiles
-import util.DataPoint
-import util.collections.Matrix
+import util.Point
 import util.extensions.combinations
 
 @DisplayName("Day 11 - Cosmic Expansion")
@@ -53,95 +52,59 @@ class CosmicExpansionTest : DataFiles {
 }
 
 class Solver(data: List<String>) {
-    private val universe = Universe(data)
+    private val universe = Universe.fromInput(data)
     fun solvePartOne(): Int {
-//        val expanded = universe.expand()
-//        val galaxies = expanded.galaxies
-
-        val galaxies = universe.expandedUniverseGalaxies(2)
-        val paths = galaxies.asSequence().combinations(2).toList().map {
-            "${it[0].y},${it[0].x} -> ${it[1].y},${it[1].x}" to it[0].distanceFrom(it[1])
-        }
-        return paths.sumOf { it.second }
+        val expanded = universe.expand(2)
+        val paths = expanded.galaxyDistances
+        return paths.values.sum()
     }
 
     fun solvePartTwo(expansionFactor: Int): Long {
-        val galaxies = universe.expandedUniverseGalaxies(expansionFactor)
-        val paths = galaxies.asSequence().combinations(2).toList().map {
-            "${it[0].y},${it[0].x} -> ${it[1].y},${it[1].x}" to it[0].distanceFrom(it[1])
-        }
-        return paths.sumOf { it.second.toLong() }
+        val expanded = universe.expand(expansionFactor)
+        val paths = expanded.galaxyDistances
+        return paths.values.sumOf { it.toLong() }
     }
 }
 
-data class Universe(val matrix: Matrix<UniverseComponent>) {
-    constructor(input: List<String>) : this(
-        Matrix(
-            input.map { row ->
-                row.map { col ->
-                    UniverseComponent.fromSymbol(col)
+data class Universe(private val galaxies: List<Point>) {
+    companion object {
+        fun fromInput(input: List<String>): Universe = Universe(
+            input.mapIndexed { y, row ->
+                row.mapIndexedNotNull { x, c ->
+                    if (c == '#') {
+                        Point(x, y)
+                    } else {
+                        null
+                    }
                 }
-            })
-    )
-
-    fun expand(): Universe {
-        val columnsWithGalaxies = galaxies.map { it.x }.toSet()
-        val rowsWithGalaxies = galaxies.map { it.y }.toSet()
-        val columnsWithNoGalaxies = (0 until matrix.width).filterNot { columnsWithGalaxies.contains(it) }
-        val rowsWithNoGalaxies = (0 until matrix.height).filterNot { rowsWithGalaxies.contains(it) }
-
-        val newColumnLocations = (0 until matrix.width).map {
-            it + columnsWithNoGalaxies.filter { col -> col < it }.size
-        }
-        val newRowLocations = (0 until matrix.height).map {
-            it + rowsWithNoGalaxies.filter { row -> row < it }.size
-        }
-
-        val newUniverseData = MutableList(matrix.height + rowsWithNoGalaxies.size) {
-            MutableList(matrix.width + columnsWithNoGalaxies.size) {
-                UniverseComponent.SPACE
-            }
-        }
-        galaxies.forEach {
-            newUniverseData[newRowLocations[it.y]][newColumnLocations[it.x]] = it.value
-        }
-
-        return Universe(Matrix(newUniverseData))
+            }.flatten()
+        )
     }
 
-    val galaxies: List<DataPoint<UniverseComponent>>
-        get() = matrix.find { it == UniverseComponent.GALAXY }
-
-    fun expandedUniverseGalaxies(expansionFactor: Int): List<DataPoint<UniverseComponent>> {
+    fun expand(expansionFactor: Int): Universe {
+        val width = galaxies.maxOf { it.x + 1 }
+        val height = galaxies.maxOf { it.y + 1 }
         val columnsWithGalaxies = galaxies.map { it.x }.toSet()
         val rowsWithGalaxies = galaxies.map { it.y }.toSet()
-        val columnsWithNoGalaxies = (0 until matrix.width).filterNot { columnsWithGalaxies.contains(it) }
-        val rowsWithNoGalaxies = (0 until matrix.height).filterNot { rowsWithGalaxies.contains(it) }
+        val columnsWithNoGalaxies = (0 until width).filterNot { columnsWithGalaxies.contains(it) }
+        val rowsWithNoGalaxies = (0 until height).filterNot { rowsWithGalaxies.contains(it) }
 
-        val newColumnLocations = (0 until matrix.width).map {
+        val newColumnLocations = (0 until width).map {
             it + (columnsWithNoGalaxies.filter { col -> col <= it }.size * (expansionFactor - 1))
         }
-        val newRowLocations = (0 until matrix.height).map {
+        val newRowLocations = (0 until height).map {
             it + (rowsWithNoGalaxies.filter { row -> row <= it }.size * (expansionFactor - 1))
         }
 
-        return galaxies.map {
-            DataPoint(newColumnLocations[it.x], newRowLocations[it.y], UniverseComponent.GALAXY)
+        return Universe(
+            galaxies.map {
+                Point(newColumnLocations[it.x], newRowLocations[it.y])
+            }
+        )
+    }
+
+    val galaxyDistances: Map<String, Int>
+        get() = galaxies.asSequence().combinations(2).toList().associate {
+            "${it[0].y},${it[0].x} -> ${it[1].y},${it[1].x}" to it[0].distanceFrom(it[1])
         }
-    }
-}
-
-enum class UniverseComponent(val symbol: Char) {
-    GALAXY('#'),
-    SPACE('.');
-
-    companion object {
-        fun fromSymbol(symbol: Char): UniverseComponent =
-            entries.firstOrNull { it.symbol == symbol }
-                ?: throw IllegalArgumentException("Cannot find component with symbol '$symbol'")
-    }
-
-    override fun toString(): String {
-        return symbol.toString()
-    }
 }

@@ -7,7 +7,7 @@ fun IntRange.encloses(other: IntRange) =
 
 fun IntRange.overlaps(other: IntRange) =
     (this.contains(other.first) || this.contains(other.last)) ||
-            (other.contains(this.first) || other.contains(this.last))
+        (other.contains(this.first) || other.contains(this.last))
 
 /**
  * Chunks the List<String> into a List<List<String>>, where chunks are broken up by the delimiter indicated (default is blank).

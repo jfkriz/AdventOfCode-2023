@@ -7,6 +7,7 @@ import util.Direction
 import util.extensions.toward
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
     private var grid: MutableList<MutableList<T>> =
         validate(initialContents).map { it.map { r -> r }.toMutableList() }.toMutableList()
@@ -44,7 +45,7 @@ open class Matrix<T>(initialContents: List<List<T>>) : Iterable<List<T>> {
     ): Map<Direction, DataPoint<T>> =
         Direction.entries.filter { includeDiagonal || !it.diagonal }.filter {
             (row + it.yOffset < height) && (row + it.yOffset >= 0) &&
-                    (col + it.xOffset < width) && (col + it.xOffset >= 0)
+                (col + it.xOffset < width) && (col + it.xOffset >= 0)
         }.associateWith {
             pointAt(row + it.yOffset, col + it.xOffset)
         }.filter {
