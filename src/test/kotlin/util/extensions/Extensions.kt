@@ -7,7 +7,7 @@ fun IntRange.encloses(other: IntRange) =
 
 fun IntRange.overlaps(other: IntRange) =
     (this.contains(other.first) || this.contains(other.last)) ||
-        (other.contains(this.first) || other.contains(this.last))
+            (other.contains(this.first) || other.contains(this.last))
 
 /**
  * Chunks the List<String> into a List<List<String>>, where chunks are broken up by the delimiter indicated (default is blank).
@@ -121,3 +121,17 @@ fun <T> assertValue(value: T, test: Boolean, lazyMessage: () -> Any): T {
     assert(test) { lazyMessage }
     return value
 }
+
+fun <T> Sequence<T>.combinations(size: Int): Sequence<List<T>> =
+    sequence {
+        if (size > 0) {
+            for ((i, element) in withIndex()) {
+                val remaining = drop(i + 1)
+                for (combination in remaining.combinations(size - 1)) {
+                    yield(listOf(element) + combination)
+                }
+            }
+        } else {
+            yield(emptyList())
+        }
+    }
