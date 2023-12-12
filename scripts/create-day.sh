@@ -54,6 +54,8 @@ perl -spi -e "s/package dayNN/package day$day/;" \
   -e "s/Day NN/Day $day/;" \
   -e "s/Description/$aoc_title/;" $day_dir/TodayTest.kt \
   || (echo "Could not update files" && exit 1)
+perl -spi -e "s/Description/$aoc_title/;" $day_dir/TodayTest.kt \
+  || (echo "Could not update description in files" && exit 1)
 echo "  Done!"
 echo
 

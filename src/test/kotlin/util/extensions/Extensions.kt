@@ -135,3 +135,9 @@ fun <T> Sequence<T>.combinations(size: Int): Sequence<List<T>> =
             yield(emptyList())
         }
     }
+
+fun String.repeatWithSeparator(times: Int, sep: String): String =
+    (1..times).joinToString(sep) { this }
+
+fun <T> Iterable<T>.repeatWithSeparator(times: Int, iterableSep: String = ",", sep: String = ","): String =
+    (1..times).joinToString(sep) { this.joinToString(iterableSep) }
