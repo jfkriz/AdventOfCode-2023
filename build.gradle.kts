@@ -1,5 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 plugins {
     kotlin("jvm") version "1.9.21"
@@ -18,6 +20,31 @@ dependencies {
 }
 
 tasks {
+    register<Exec>("createDay") {
+        group = "advent of code"
+        description = "Create the current day's directory and files from the template"
+        commandLine("sh", "-c", "${project.rootDir}/scripts/create-day.sh")
+    }
+
+    register<Test>("testDay") {
+        group = "advent of code"
+        description = "Run the current day's tests"
+        useJUnitPlatform()
+        val day = LocalDate.now().format(DateTimeFormatter.ofPattern("dd"))
+        filter {
+            includeTestsMatching("day$day.*")
+        }
+        testLogging {
+            info.events = mutableSetOf(
+                TestLogEvent.PASSED,
+                TestLogEvent.FAILED,
+                TestLogEvent.STANDARD_OUT,
+                TestLogEvent.STANDARD_ERROR
+            )
+            events = info.events
+        }
+    }
+
     test {
         useJUnitPlatform()
         testLogging.events = mutableSetOf(
