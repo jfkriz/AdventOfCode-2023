@@ -26,6 +26,12 @@ tasks {
         commandLine("sh", "-c", "${project.rootDir}/scripts/create-day.sh")
     }
 
+    register<Exec>("createReadme") {
+        group = "advent of code"
+        description = "Create the current day's README from the AoC html page"
+        commandLine("sh", "-c", "${project.rootDir}/scripts/generate-readme.sh")
+    }
+
     register<Test>("testDay") {
         group = "advent of code"
         description = "Run the current day's tests"
@@ -57,7 +63,7 @@ tasks {
             // Don't run tests on the "template" classes
             excludeTestsMatching("dayNN.*")
             // Don't run tests on real input during CI build, since those will fail (personal input data for problems is not checked in to github)
-            if (System.getenv("CI") == "true") {
+            if (System.getenv("CI")=="true") {
                 excludeTestsMatching("*Real Input*")
             }
         }
