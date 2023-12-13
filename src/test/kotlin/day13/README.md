@@ -1,5 +1,4 @@
 # [Day 13: Point of Incidence](https://adventofcode.com/2023/day/13)
-
 ## Part One
 
 With your help, the hot springs team locates an appropriate spring which
@@ -25,6 +24,8 @@ can figure out where the mirrors are!
 
 For example:
 
+    
+    
     #.##..##.
     ..#.##.#.
     ##......#
@@ -40,6 +41,7 @@ For example:
     #####.##.
     ..##..###
     #....#..#
+    
 
 To find the reflection in each pattern, you need to find a perfect reflection
 across either a horizontal line between two rows or across a vertical line
@@ -49,6 +51,8 @@ In the first pattern, the reflection is across a vertical line between two
 columns; arrows on each of the two columns point at the line between the
 columns:
 
+    
+    
     123456789
         ><   
     #.##..##.
@@ -60,6 +64,7 @@ columns:
     #.#.##.#.
         ><   
     123456789
+    
 
 In this pattern, the line of reflection is the vertical line between columns 5
 and 6. Because the vertical line is not perfectly in the middle of the
@@ -70,6 +75,8 @@ match exactly: column 2 matches column 9, column 3 matches 8, 4 matches 7, and
 
 The second pattern reflects across a horizontal line instead:
 
+    
+    
     1 #...##..# 1
     2 #....#..# 2
     3 ..##..### 3
@@ -77,6 +84,7 @@ The second pattern reflects across a horizontal line instead:
     5^#####.##.^5
     6 ..##..### 6
     7 #....#..# 7
+    
 
 This pattern reflects across the horizontal line between rows 4 and 5. Row 1
 would reflect with a hypothetical row 8, but since that's not in the pattern,
@@ -109,6 +117,8 @@ necessarily continue being valid after the smudge is fixed.)
 
 Here's the above example again:
 
+    
+    
     #.##..##.
     ..#.##.#.
     ##......#
@@ -124,10 +134,13 @@ Here's the above example again:
     #####.##.
     ..##..###
     #....#..#
+    
 
 The first pattern's smudge is in the top-left corner. If the top-left `#` were
 instead `.`, it would have a different, horizontal line of reflection:
 
+    
+    
     1 ..##..##. 1
     2 ..#.##.#. 2
     3v##......#v3
@@ -135,6 +148,7 @@ instead `.`, it would have a different, horizontal line of reflection:
     5 ..#.##.#. 5
     6 ..##..##. 6
     7 #.#.##.#. 7
+    
 
 With the smudge in the top-left corner repaired, a new horizontal line of
 reflection between rows 3 and 4 now exists. Row 7 has no corresponding
@@ -144,6 +158,8 @@ matches row 6, row 2 matches row 5, and row 3 matches row 4.
 In the second pattern, the smudge can be fixed by changing the fifth symbol on
 row 2 from `.` to `#`:
 
+    
+    
     1v#...##..#v1
     2^#...##..#^2
     3 ..##..### 3
@@ -151,6 +167,7 @@ row 2 from `.` to `#`:
     5 #####.##. 5
     6 ..##..### 6
     7 #....#..# 7
+    
 
 Now, the pattern has a different horizontal line of reflection between rows 1
 and 2.
