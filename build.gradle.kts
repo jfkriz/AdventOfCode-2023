@@ -15,8 +15,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    val junitVersion = "5.10.1"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 tasks {
@@ -63,7 +64,7 @@ tasks {
             // Don't run tests on the "template" classes
             excludeTestsMatching("dayNN.*")
             // Don't run tests on real input during CI build, since those will fail (personal input data for problems is not checked in to github)
-            if (System.getenv("CI")=="true") {
+            if (System.getenv("CI") == "true") {
                 excludeTestsMatching("*Real Input*")
             }
         }
