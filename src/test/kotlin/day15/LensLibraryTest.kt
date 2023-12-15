@@ -64,15 +64,14 @@ class Solver(data: List<String>) {
 
 data class Lens(val label: String, val operation: Char, val focalLength: Int) {
     companion object {
-        fun fromInputString(inputString: String): Lens {
-            return if (inputString.contains('=')) {
+        fun fromInputString(inputString: String) =
+            if (inputString.contains('=')) {
                 val parts = inputString.split('=')
                 Lens(parts[0], '=', parts[1].toInt())
             } else {
                 val parts = inputString.split('-')
                 Lens(parts[0], '-', 0)
             }
-        }
     }
 
     val boxNumber: Int =
@@ -93,24 +92,20 @@ data class Lens(val label: String, val operation: Char, val focalLength: Int) {
 }
 
 class Boxes(lenses: List<Lens>) {
-    val boxes: List<List<Lens>>
+    private val boxes: List<List<Lens>>
 
     init {
-        val boxes = Array(256) { mutableListOf<Lens>() }
+        boxes = List(256) { mutableListOf() }
         lenses.forEach { lens ->
             val existingLens = boxes[lens.boxNumber].indexOfFirst { it.label == lens.label }
             if (lens.isRemoval && existingLens >= 0) {
                 boxes[lens.boxNumber].removeAt(existingLens)
+            } else if (lens.isAddition && existingLens >= 0) {
+                boxes[lens.boxNumber][existingLens] = lens
             } else if (lens.isAddition) {
-                if (existingLens >= 0) {
-                    boxes[lens.boxNumber][existingLens] = lens
-                } else {
-                    boxes[lens.boxNumber].add(lens)
-                }
+                boxes[lens.boxNumber].add(lens)
             }
         }
-
-        this.boxes = boxes.toList()
     }
 
     val focalLengths: List<Long>
