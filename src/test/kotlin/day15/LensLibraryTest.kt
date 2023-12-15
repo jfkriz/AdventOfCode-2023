@@ -56,21 +56,20 @@ class Solver(data: List<String>) {
             it.inputValue.computeHash()
         }
 
-    fun solvePartTwo(): Long {
-        val boxes = Boxes(lenses)
-        return boxes.focalLengths.sum()
-    }
+    fun solvePartTwo(): Long =
+        Boxes(lenses).focalLengths.sum()
 }
+
 
 data class Lens(val label: String, val operation: Char, val focalLength: Int) {
     companion object {
         fun fromInputString(inputString: String) =
-            if (inputString.contains('=')) {
-                val parts = inputString.split('=')
-                Lens(parts[0], '=', parts[1].toInt())
-            } else {
-                val parts = inputString.split('-')
-                Lens(parts[0], '-', 0)
+            inputString.split('-', '=').filterNot { it.isBlank() }.let { parts ->
+                if (parts.size == 2) {
+                    Lens(parts[0], '=', parts[1].toInt())
+                } else {
+                    Lens(parts[0], '-', 0)
+                }
             }
     }
 
@@ -78,10 +77,7 @@ data class Lens(val label: String, val operation: Char, val focalLength: Int) {
         label.computeHash().toInt()
 
     val isAddition: Boolean
-        get() = !isRemoval
-
-    val isRemoval: Boolean
-        get() = operation == '-'
+        get() = operation == '='
 
     val inputValue: String =
         if (isAddition) {
@@ -97,13 +93,10 @@ class Boxes(lenses: List<Lens>) {
     init {
         boxes = List(256) { mutableListOf() }
         lenses.forEach { lens ->
-            val existingLens = boxes[lens.boxNumber].indexOfFirst { it.label == lens.label }
-            if (lens.isRemoval && existingLens >= 0) {
-                boxes[lens.boxNumber].removeAt(existingLens)
-            } else if (lens.isAddition && existingLens >= 0) {
-                boxes[lens.boxNumber][existingLens] = lens
-            } else if (lens.isAddition) {
-                boxes[lens.boxNumber].add(lens)
+            if (lens.isAddition) {
+                boxes[lens.boxNumber] += lens
+            } else {
+                boxes[lens.boxNumber] -= lens
             }
         }
     }
@@ -119,14 +112,30 @@ class Boxes(lenses: List<Lens>) {
 fun String.computeHash(): Long {
     var result = 0L
     this.forEach { char ->
-        result = result.addHash(char)
+        result = result.addCharacterHash(char)
     }
     return result
 }
 
-fun Long.addHash(char: Char): Long =
+fun Long.addCharacterHash(char: Char): Long =
     if (char == '\n') {
         this
     } else {
         ((this + char.code) * 17) % 256
+    }
+
+operator fun MutableList<Lens>.minusAssign(lens: Lens): Unit =
+    this.indexOfFirst { it.label == lens.label }.let {
+        if (it >= 0) {
+            this.removeAt(it)
+        }
+    }
+
+operator fun MutableList<Lens>.plusAssign(lens: Lens): Unit =
+    this.indexOfFirst { it.label == lens.label }.let {
+        if (it >= 0) {
+            this[it] = lens
+        } else {
+            this.add(lens)
+        }
     }
