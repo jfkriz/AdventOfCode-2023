@@ -60,7 +60,6 @@ class Solver(data: List<String>) {
         Boxes(lenses).focalLengths.sum()
 }
 
-
 data class Lens(val label: String, val operation: Char, val focalLength: Int) {
     companion object {
         fun fromInputString(inputString: String) =
