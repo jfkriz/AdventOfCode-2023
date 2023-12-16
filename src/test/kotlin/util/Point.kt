@@ -52,7 +52,7 @@ open class Point(var x: Int, var y: Int) {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as DataPoint<*>
+        other as Point
 
         if (x != other.x) return false
         if (y != other.y) return false
