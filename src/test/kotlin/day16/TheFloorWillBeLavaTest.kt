@@ -75,9 +75,11 @@ class Solver(data: List<String>) {
 data class MirrorMap(val mirrors: List<List<Mirror>>) {
     companion object {
         fun fromInputLines(lines: List<String>) =
-            MirrorMap(lines.map { row ->
-                row.map { Mirror(MirrorDirection.fromSymbol(it)) }
-            })
+            MirrorMap(
+                lines.map { row ->
+                    row.map { Mirror(MirrorDirection.fromSymbol(it)) }
+                }
+            )
     }
 
     val energizedMirrors = mirrors.flatten().filter { it.isEnergized }
@@ -128,23 +130,27 @@ data class MirrorMap(val mirrors: List<List<Mirror>>) {
         }
 
         if (mirror.direction == MirrorDirection.TILTED_RIGHT) {
-            return listOf(when (direction) {
-                Direction.Up -> Direction.Right
-                Direction.Down -> Direction.Left
-                Direction.Right -> Direction.Up
-                // Direction.Left
-                else -> Direction.Down
-            }).map { point.copy() to it }
+            return listOf(
+                when (direction) {
+                    Direction.Up -> Direction.Right
+                    Direction.Down -> Direction.Left
+                    Direction.Right -> Direction.Up
+                    // Direction.Left
+                    else -> Direction.Down
+                }
+            ).map { point.copy() to it }
         }
 
         if (mirror.direction == MirrorDirection.TILTED_LEFT) {
-            return listOf(when (direction) {
-                Direction.Up -> Direction.Left
-                Direction.Down -> Direction.Right
-                Direction.Right -> Direction.Down
-                // Direction.Left
-                else -> Direction.Up
-            }).map { point.copy() to it }
+            return listOf(
+                when (direction) {
+                    Direction.Up -> Direction.Left
+                    Direction.Down -> Direction.Right
+                    Direction.Right -> Direction.Down
+                    // Direction.Left
+                    else -> Direction.Up
+                }
+            ).map { point.copy() to it }
         }
 
         // Shouldn't get here...
@@ -155,7 +161,6 @@ data class MirrorMap(val mirrors: List<List<Mirror>>) {
 
     private fun List<List<Mirror>>.containsPoint(point: Point) =
         point.y >= 0 && point.y < this.size && point.x >= 0 && point.x < this[0].size
-
 }
 
 data class Mirror(val direction: MirrorDirection, var energy: Int = 0) {
@@ -186,4 +191,3 @@ fun Direction.isHorizontal() =
 
 fun Direction.isVertical() =
     this == Direction.Up || this == Direction.Down
-
