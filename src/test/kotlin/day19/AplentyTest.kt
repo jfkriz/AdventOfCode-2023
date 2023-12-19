@@ -57,9 +57,7 @@ class Solver(data: List<String>) {
         val queue = ArrayDeque<WorkflowRange>().apply { add(start) }
         val accepted = mutableListOf<WorkflowRange>()
 
-        var steps = 0
         while (queue.isNotEmpty()) {
-            steps++
             val range = queue.removeLast()
             val splits = range.split()
             accepted.addAll(splits.filter { it.name.isAccepted() })
@@ -117,7 +115,7 @@ data class Workflow(val name: String, val rules: List<Rule>, val terminator: Str
         }
     }
 
-    fun executeRules(part: Part): String = rules.firstOrNull { it.checkPart(part) }?.target ?: terminator
+    fun executeRules(part: Part): String = rules.firstOrNull { it.allows(part) }?.target ?: terminator
 }
 
 data class Rule(val category: Char, val operator: Char, val operand: Long, val target: String) {
@@ -127,25 +125,14 @@ data class Rule(val category: Char, val operator: Char, val operand: Long, val t
         }
     }
 
-    fun checkPart(part: Part): Boolean =
-        part.any { (category, value) ->
-            passes(category, value)
-        }
-
-    private fun passes(category: Char, value: Long): Boolean {
-        if (category != this.category) {
-            return false
-        }
-
-        return when (operator) {
-            '>' -> value > this.operand
-            '<' -> value < this.operand
-            else -> false
-        }
+    fun allows(part: Part): Boolean = when (operator) {
+        '>' -> part[category] > operand
+        '<' -> part[category] < operand
+        else -> false
     }
 }
 
-data class Part(val x: Long, val m: Long, val a: Long, val s: Long) : Iterable<Pair<Char, Long>> {
+data class Part(val x: Long, val m: Long, val a: Long, val s: Long) {
     companion object {
         fun fromString(input: String): Part = input.replace("[}{]".toRegex(), "").split(",").let { parts ->
             Part(
@@ -167,8 +154,6 @@ data class Part(val x: Long, val m: Long, val a: Long, val s: Long) : Iterable<P
             's' -> s
             else -> throw IllegalArgumentException("Invalid category $category")
         }
-
-    override fun iterator() = listOf('x' to x, 'm' to m, 'a' to a, 's' to s).iterator()
 }
 
 data class WorkflowRange(
