@@ -4,7 +4,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "1.9.23"
     id("org.jlleitschuh.gradle.ktlint") version "11.6.1"
     kotlin("plugin.serialization") version "1.9.21"
     application
